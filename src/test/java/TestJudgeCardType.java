@@ -235,4 +235,81 @@ public class TestJudgeCardType {
         assertFalse(judgeCardType.isFourKind(cards02));
         assertFalse(judgeCardType.isFourKind(cards03));
     }
+
+    @Test
+    public void testGetCardsType() {
+        Card[] cards01 = {
+                new Card(CardType.C, 2),
+                new Card(CardType.H, 5),
+                new Card(CardType.C, 4),
+                new Card(CardType.D, 7),
+                new Card(CardType.C, 6),
+        };
+        Card[] cards02 = {
+                new Card(CardType.C, 2),
+                new Card(CardType.S, 2),
+                new Card(CardType.C, 4),
+                new Card(CardType.H, 5),
+                new Card(CardType.D, 6),
+        };
+        Card[] cards03 = {
+                new Card(CardType.C, 2),
+                new Card(CardType.H, 2),
+                new Card(CardType.S, 3),
+                new Card(CardType.C, 3),
+                new Card(CardType.D, 5),
+        };
+        Card[] cards04 = {
+                new Card(CardType.C, 2),
+                new Card(CardType.H, 2),
+                new Card(CardType.S, 2),
+                new Card(CardType.D, 3),
+                new Card(CardType.C, 5),
+        };
+        Card[] cards05 = {
+                new Card(CardType.C, 2),
+                new Card(CardType.H, 3),
+                new Card(CardType.S, 4),
+                new Card(CardType.D, 5),
+                new Card(CardType.C, 6),
+        };
+        Card[] cards06 = {
+                new Card(CardType.C, 2),
+                new Card(CardType.C, 2),
+                new Card(CardType.C, 2),
+                new Card(CardType.C, 3),
+                new Card(CardType.C, 5),
+        };
+        Card[] cards07 = {
+                new Card(CardType.C, 2),
+                new Card(CardType.H, 2),
+                new Card(CardType.S, 2),
+                new Card(CardType.D, 3),
+                new Card(CardType.C, 3),
+        };
+        Card[] cards08 = {
+                new Card(CardType.C, 2),
+                new Card(CardType.H, 2),
+                new Card(CardType.S, 2),
+                new Card(CardType.D, 2),
+                new Card(CardType.C, 5),
+        };
+        Card[] cards09 = {
+                new Card(CardType.C, 2),
+                new Card(CardType.C, 3),
+                new Card(CardType.C, 4),
+                new Card(CardType.C, 5),
+                new Card(CardType.C, 6),
+        };
+
+        assertEquals(1, judgeCardType.getCardsType(cards01));
+        assertEquals(2, judgeCardType.getCardsType(cards02));
+        assertEquals(3, judgeCardType.getCardsType(cards03));
+        assertEquals(4, judgeCardType.getCardsType(cards04));
+        assertEquals(5, judgeCardType.getCardsType(cards05));
+        assertEquals(6, judgeCardType.getCardsType(cards06));
+        assertEquals(7, judgeCardType.getCardsType(cards07));
+        assertEquals(8, judgeCardType.getCardsType(cards08));
+        assertEquals(9, judgeCardType.getCardsType(cards09));
+    }
 }

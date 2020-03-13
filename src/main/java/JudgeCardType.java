@@ -157,11 +157,40 @@ public class JudgeCardType {
     * @Author: 林子牛
     * @Date: 2020-03-13
     */
-    private Map<Card, Integer> generateMap(Card[] cards) {
+    public Map<Card, Integer> generateMap(Card[] cards) {
         Map<Card, Integer> map = new TreeMap<Card, Integer>();
         for (int i = 0; i < cards.length; i++) {
             map.put(cards[i], map.getOrDefault(cards[i], 0) + 1);
         }
         return map;
+    }
+
+    public int getCardsType(Card[] cards) {
+
+        if (isStraightFlush(cards)) {
+            return 9;
+        }
+        if (isFourKind(cards)) {
+            return 8;
+        }
+        if (isFullHouse(cards)) {
+            return 7;
+        }
+        if (isFlush(cards)) {
+            return 6;
+        }
+        if (isStraight(cards)) {
+            return 5;
+        }
+        if (isThreeKind(cards)) {
+            return 4;
+        }
+        if (isTwoPairs(cards)) {
+            return 3;
+        }
+        if (isPair(cards)) {
+            return 2;
+        }
+        return 1;
     }
 }

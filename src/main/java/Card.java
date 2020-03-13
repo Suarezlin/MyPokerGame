@@ -40,35 +40,33 @@ public class Card implements Comparable<Card> {
             return 0;
         }
     }
+
+    @Override
+    public String toString() {
+        return this.getType() + " " + this.getNumber();
+    }
 }
 
 enum CardType {
-    D("方片", 1),
-    S("黑桃", 2),
-    H("红桃", 3),
-    C("梅花", 4);
+    D('D'),
+    S('S'),
+    H('H'),
+    C('C');
 
-    private String name;
-    private int index;
+    private char name;
 
-    CardType(String name, int index) {
+    CardType(char name) {
         this.name = name;
-        this.index = index;
     }
 
-    public String getName() {
+    public char getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(char name) {
         this.name = name;
     }
 
-    public int getIndex() {
-        return index;
-    }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
+
 }
