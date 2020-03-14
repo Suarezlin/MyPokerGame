@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 public class JudgeWinner {
 
     private Map<Character, Integer> map = new HashMap<Character, Integer>();
+    private Map<Character, CardType> types = new HashMap<>();
 
     public JudgeWinner() {
         map.put('2', 2);
@@ -19,6 +20,10 @@ public class JudgeWinner {
         map.put('Q', 12);
         map.put('K', 13);
         map.put('A', 14);
+        types.put('D', CardType.D);
+        types.put('S', CardType.S);
+        types.put('H', CardType.H);
+        types.put('C', CardType.C);
     }
 
     public Card[] generateCards(String str) {
@@ -27,20 +32,7 @@ public class JudgeWinner {
         Card[] cards = new Card[strs.length];
 
         for (int i = 0; i < strs.length; i++) {
-            switch (strs[i].charAt(0)) {
-                case 'D':
-                    cards[i] = new Card(CardType.D, map.get(strs[i].charAt(1)));
-                    break;
-                case 'S':
-                    cards[i] = new Card(CardType.S, map.get(strs[i].charAt(1)));
-                    break;
-                case 'H':
-                    cards[i] = new Card(CardType.H, map.get(strs[i].charAt(1)));
-                    break;
-                case 'C':
-                    cards[i] = new Card(CardType.C, map.get(strs[i].charAt(1)));
-                    break;
-            }
+            cards[i] = new Card(types.get((strs[i].charAt(0))), map.get(strs[i].charAt(1)));
         }
 
         return cards;
@@ -77,6 +69,13 @@ public class JudgeWinner {
         return -1;
     }
 
+    /**
+    * @Description: 两者都为同花顺时判断胜负
+    * @Param: [card01, card02]
+    * @return: int
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     private int judgeLevel9(Card[] card01, Card[] card02) {
 
         int sum1 = getCardSum(card01);
@@ -90,35 +89,25 @@ public class JudgeWinner {
         }
     }
 
+    /**
+    * @Description: 铁支和葫芦情况类似，统一判断
+    * @Param: [card01, card02, num]
+    * @return: int
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     private int level7Or8(Card[] card01, Card[] card02, int num) {
-        Map<Card, Integer> map01 = generateMap(card01);
-        Map<Card, Integer> map02 = generateMap(card02);
-
-        int s1 = 0;
-        int s2 = 0;
-        int max01 = Integer.MIN_VALUE;
-        int max02 = Integer.MIN_VALUE;
+        Map<Card, Integer> map01 = JudgeCardType.generateMap(card01);
+        Map<Card, Integer> map02 = JudgeCardType.generateMap(card02);
 
 
-        for (Map.Entry<Card, Integer> e : map01.entrySet()) {
-            if (e.getValue() == num) {
-                s1 = e.getKey().getNumber();
-            } else {
-                if (e.getKey().getNumber() > max01) {
-                    max01 = e.getKey().getNumber();
-                }
-            }
-        }
+        int[] res = getPairCardNum(map01, num);
+        int s1 = res[0];
+        int max01 = res[1];
+        res = getPairCardNum(map02, num);
+        int s2 = res[0];
+        int max02 = res[1];
 
-        for (Map.Entry<Card, Integer> e : map02.entrySet()) {
-            if (e.getValue() == num) {
-                s2 = e.getKey().getNumber();
-            } else {
-                if (e.getKey().getNumber() > max02) {
-                    max02 = e.getKey().getNumber();
-                }
-            }
-        }
 
         if (s1 > s2) {
             return 1;
@@ -135,44 +124,92 @@ public class JudgeWinner {
         }
     }
 
+    /**
+    * @Description: 多个牌型都需要判断对子，封装成方法，方便调用
+    * @Param: [map, num]
+    * @return: int[]
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
+    private int[] getPairCardNum(Map<Card, Integer> map, int num) {
+        int s = 0;
+        int max = Integer.MIN_VALUE;
+        for (Map.Entry<Card, Integer> e : map.entrySet()) {
+            if (e.getValue() == num) {
+                s = e.getKey().getNumber();
+            } else {
+                if (e.getKey().getNumber() > max) {
+                    max = e.getKey().getNumber();
+                }
+            }
+        }
+        return new int[] {s, max};
+    }
+
+    /**
+    * @Description: 两者都为铁支时判断胜负
+    * @Param: [card01, card02]
+    * @return: int
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     private int judgeLevel8(Card[] card01, Card[] card02) {
 
         return level7Or8(card01, card02, 4);
     }
 
+    /**
+    * @Description: 两者都为葫芦时判断胜负
+    * @Param: [card01, card02]
+    * @return: int
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     private int judgeLevel7(Card[] card01, Card[] card02) {
         return level7Or8(card01, card02, 3);
     }
 
+    /**
+    * @Description: 两者都为同花时判断胜负
+    * @Param: [card01, card02]
+    * @return: int
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     private int judgeLevel6(Card[] card01, Card[] card02) {
         return judgeLevel1(card01, card02);
     }
 
+    /**
+    * @Description: 两者都为顺子时判断胜负
+    * @Param: [card01, card02]
+    * @return: int
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     private int judgeLevel5(Card[] card01, Card[] card02) {
         return judgeLevel9(card01, card02);
     }
 
-    private int judgeLevel4(Card[] card01, Card[] card02) {
+    /**
+    * @Description: 对子和三条情况类似，统一判断
+    * @Param: [card01, card02, num]
+    * @return: int
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
+    private int judgeLevel2Or4(Card[] card01, Card[] card02, int num) {
         List<Card> list01 = new ArrayList<Card>(Arrays.asList(card01));
         List<Card> list02 = new ArrayList<Card>(Arrays.asList(card02));
-        Map<Card, Integer> map01 = generateMap(card01);
-        Map<Card, Integer> map02 = generateMap(card02);
-        int c1 = 0;
-        int c2 = 0;
+        Map<Card, Integer> map01 = JudgeCardType.generateMap(card01);
+        Map<Card, Integer> map02 = JudgeCardType.generateMap(card02);
 
-        for (Map.Entry<Card, Integer> e : map01.entrySet()) {
-            if (e.getValue() == 2) {
-                c1 = e.getKey().getNumber();
-                break;
-            }
-        }
 
-        for (Map.Entry<Card, Integer> e : map02.entrySet()) {
-            if (e.getValue() == 2) {
-                c2 = e.getKey().getNumber();
-                break;
-            }
-        }
+        int[] res = getPairCardNum(map01, num);
+        int c1 = res[0];
+        res = getPairCardNum(map02, num);
+        int c2 = res[0];
+
 
         if (c1 > c2) {
             return 1;
@@ -193,11 +230,32 @@ public class JudgeWinner {
         }
     }
 
+    /**
+    * @Description: 两者都为三条时判断胜负
+    * @Param: [card01, card02]
+    * @return: int
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
+    private int judgeLevel4(Card[] card01, Card[] card02) {
+        return judgeLevel2Or4(card01, card02, 3);
+
+    }
+
+    /**
+    * @Description: 两者都为两对时判断胜负
+    * @Param: [card01, card02]
+    * @return: int
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     private int judgeLevel3(Card[] card01, Card[] card02) {
         List<Card> list01 = new ArrayList<Card>(Arrays.asList(card01));
         List<Card> list02 = new ArrayList<Card>(Arrays.asList(card02));
-        Map<Card, Integer> map01 = generateMap(card01);
-        Map<Card, Integer> map02 = generateMap(card02);
+        Map<Card, Integer> map01 = JudgeCardType.generateMap(card01);
+        Map<Card, Integer> map02 = JudgeCardType.generateMap(card02);
+
+
         int c1 = 0;
         int c2 = 0;
 
@@ -227,47 +285,24 @@ public class JudgeWinner {
         }
     }
 
+    /**
+    * @Description: 两者都为对子时判断胜负
+    * @Param: [card01, card02]
+    * @return: int
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     private int judgeLevel2(Card[] card01, Card[] card02) {
-        List<Card> list01 = new ArrayList<Card>(Arrays.asList(card01));
-        List<Card> list02 = new ArrayList<Card>(Arrays.asList(card02));
-        Map<Card, Integer> map01 = generateMap(card01);
-        Map<Card, Integer> map02 = generateMap(card02);
-        int c1 = 0;
-        int c2 = 0;
-
-        for (Map.Entry<Card, Integer> e : map01.entrySet()) {
-            if (e.getValue() == 2) {
-                c1 = e.getKey().getNumber();
-                break;
-            }
-        }
-
-        for (Map.Entry<Card, Integer> e : map02.entrySet()) {
-            if (e.getValue() == 2) {
-                c2 = e.getKey().getNumber();
-                break;
-            }
-        }
-
-        if (c1 > c2) {
-            return 1;
-        } else if (c1 < c2) {
-            return -1;
-        } else {
-            list01 = filter(list01, c1);
-            list02 = filter(list02, c2);
-
-            for (int i = list01.size() - 1; i >= 0; i--) {
-                if (list01.get(i).getNumber() > list02.get(i).getNumber()) {
-                    return 1;
-                } else if (list01.get(i).getNumber() < list02.get(i).getNumber()) {
-                    return -1;
-                }
-            }
-            return 0;
-        }
+        return judgeLevel2Or4(card01, card02, 2);
     }
 
+    /**
+    * @Description: 两者都为散牌时判断胜负
+    * @Param: [card01, card02]
+    * @return: int
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     private int judgeLevel1(Card[] card01, Card[] card02) {
         Arrays.sort(card01);
         Arrays.sort(card02);
@@ -282,41 +317,28 @@ public class JudgeWinner {
         return 0;
     }
 
+    /**
+    * @Description: 过滤已确定相同的牌
+    * @Param: [list, num]
+    * @return: java.util.List<Card>
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     private List<Card> filter(List<Card> list, int num) {
         return list.stream()
                 .filter(l -> l.getNumber() != num)
                 .sorted()
                 .collect(Collectors.toList());
     }
-
-    private Card getMax(Card[] cards) {
-        Card res = null;
-        int max = Integer.MIN_VALUE;
-
-        for (int i = 0; i < cards.length; i++) {
-            if (max < cards[i].getNumber()) {
-                max = cards[i].getNumber();
-                res = cards[i];
-            }
-        }
-        return res;
-    }
-
+    
+    
     /**
-     * @Description: 生成一个卡牌类型 map
-     * @Param: [cards]
-     * @return: java.util.Map<Card,java.lang.Integer>
-     * @Author: 林子牛
-     * @Date: 2020-03-13
-     */
-    public Map<Card, Integer> generateMap(Card[] cards) {
-        Map<Card, Integer> map = new TreeMap<Card, Integer>();
-        for (int i = 0; i < cards.length; i++) {
-            map.put(cards[i], map.getOrDefault(cards[i], 0) + 1);
-        }
-        return map;
-    }
-
+    * @Description: 计算所有的牌加在一起的和
+    * @Param: [cards]
+    * @return: int
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     private int getCardSum(Card[] cards) {
         int sum = 0;
         for (int i = 0; i < cards.length; i++) {
@@ -326,6 +348,13 @@ public class JudgeWinner {
     }
 
 
+    /**
+    * @Description: 判断双方胜负
+    * @Param: [str1, str2]
+    * @return: java.lang.String
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     public String judge(String str1, String str2) {
 
         JudgeCardType judgeCardType = new JudgeCardType();
@@ -355,25 +384,12 @@ public class JudgeWinner {
 
 
     public static void main(String[] args) {
-        Card[] cards01 = {
-                new Card(CardType.C, 2),
-                new Card(CardType.S, 1),
-                new Card(CardType.C, 3),
-                new Card(CardType.H, 8),
-                new Card(CardType.D, 7),
-        };
 
-        Card[] cards02 = {
-                new Card(CardType.C, 2),
-                new Card(CardType.S, 4),
-                new Card(CardType.C, 3),
-                new Card(CardType.H, 13),
-                new Card(CardType.D, 14),
-        };
 
         JudgeWinner judgeWinner = new JudgeWinner();
 
         System.out.println(judgeWinner.judge("C2 S5 C3 H8 D7", "C2 S4 C3 HK DA"));
+        System.out.println(judgeWinner.judge("C2 C5 C3 C8 C7", "C2 S4 C3 HK DA"));
     }
 
 }

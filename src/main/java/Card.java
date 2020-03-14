@@ -25,12 +25,26 @@ public class Card implements Comparable<Card> {
     }
 
 
+    /**
+    * @Description: 重写 equals 方法，方便在 TreeSet 和 TreeMap 中使用
+    * @Param: obj 要比较的对象
+    * @return: 是否相等
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     @Override
     public boolean equals(Object obj) {
         Card that = (Card)obj;
         return this.getNumber() == that.getNumber();
     }
 
+    /**
+    * @Description: 实现 Comparable 接口，方便方便在 TreeMap 中和排序中使用
+    * @Param: o 要比较的对象
+    * @return: 大小情况
+    * @Author: 林子牛
+    * @Date: 2020-03-13
+    */
     public int compareTo(Card o) {
         if (this.getNumber() > o.getNumber()) {
             return 1;

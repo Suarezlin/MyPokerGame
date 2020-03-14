@@ -5,8 +5,8 @@ public class JudgeCardType {
 
     /**
     * @Description: 判断牌是不是对子
-    * @Param: [cards]
-    * @return: boolean
+    * @Param: cards 牌
+    * @return: 是否有对子
     * @Author: 林子牛
     * @Date: 2020-03-13
     */
@@ -157,13 +157,15 @@ public class JudgeCardType {
     * @Author: 林子牛
     * @Date: 2020-03-13
     */
-    public Map<Card, Integer> generateMap(Card[] cards) {
+    public static Map<Card, Integer> generateMap(Card[] cards) {
         Map<Card, Integer> map = new TreeMap<Card, Integer>();
         for (int i = 0; i < cards.length; i++) {
             map.put(cards[i], map.getOrDefault(cards[i], 0) + 1);
         }
         return map;
     }
+
+
 
     public int getCardsType(Card[] cards) {
 
